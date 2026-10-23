@@ -61,3 +61,10 @@ body {
 #toggle-favorite-btn {
   display: none;
 }
+
+.star-icon {
+  font-size: 30px;
+  color: yellow;
+  cursor: pointer;
+  vertical-align: middle;
+}
