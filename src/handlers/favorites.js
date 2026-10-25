@@ -32,12 +32,12 @@ function hideFavoriteCard(text) {
   });
 }
 
-function showFavoriteBtn(btn) {
-  btn.style.display = "inline-block";
+function showFavoriteBtn() {
+  favoriteBtn.style.display = "inline-block";
 }
 
-function hideFavoriteBtn(btn) {
-  btn.style.display = "none";
+function hideFavoriteBtn() {
+  favoriteBtn.style.display = "none";
 }
 
 function toggleFavoriteBtnIcon(isFavorite, el) {
@@ -45,8 +45,8 @@ function toggleFavoriteBtnIcon(isFavorite, el) {
   el.classList.toggle("fa-solid", isFavorite);
 }
 
-function handleFavorite(isFavorite, btn) {
-  showFavoriteBtn(btn);
+function handleFavorite(isFavorite) {
+  showFavoriteBtn(favoriteBtn);
 
   toggleFavoriteBtnIcon(isFavorite, favoriteBtn);
 }
