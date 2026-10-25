@@ -1,7 +1,7 @@
 import { handleFavorite } from "./favorites.js";
 import { generateRandomInt } from "../utils.js";
 
-function displayQuote(quote) {
+function displayQuote(quote, btn) {
   const { text, author, isFavorite } = quote;
 
   const quoteElement = document.getElementById("quote");
