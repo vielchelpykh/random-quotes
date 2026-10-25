@@ -9,7 +9,7 @@ function displayQuote(quote) {
   const quoteAuthorElement = document.getElementById("quote-author");
 
   quoteElement.dataset.currentQuoteId = id;
-  quoteTextElement.textContent = text;
+  quoteTextElement.textContent = `"${text}"`;
   quoteAuthorElement.textContent = author;
 
   handleFavorite(isFavorite);
