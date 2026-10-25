@@ -1,24 +1,21 @@
 import { currentQuote } from "../../index.js";
 
 const favoritesContainer = document.getElementById("favorites-container");
-const toggleBtn = document.getElementById("toggle-favorite-btn");
-toggleBtn.addEventListener("click", toggleFavorite);
+const favoriteBtn = document.getElementById("favorite-btn");
+favoriteBtn.addEventListener("click", () => toggleFavorite(currentQuote));
 
-hideBtn(toggleBtn);
+hideBtn(favoriteBtn);
 
-function toggleFavorite() {
-  currentQuote.isFavorite = !currentQuote.isFavorite;
+function toggleFavorite(quote) {
+  quote.isFavorite = !quote.isFavorite;
+  const { text, author, isFavorite } = quote;
 
-  toggleFavoriteIcon(currentQuote.isFavorite, toggleBtn);
+  toggleFavoriteBtnIcon(isFavorite, favoriteBtn);
 
-  if (currentQuote.isFavorite) {
-    showFavoriteCard(
-      currentQuote.text,
-      currentQuote.author,
-      favoritesContainer,
-    );
+  if (isFavorite) {
+    showFavoriteCard(text, author, favoritesContainer);
   } else {
-    hideFavoriteCard(currentQuote.text);
+    hideFavoriteCard(text);
   }
 }
 
@@ -49,15 +46,15 @@ function hideBtn(btn) {
   btn.style.display = "none";
 }
 
-function toggleFavoriteIcon(isFavorite, el) {
+function toggleFavoriteBtnIcon(isFavorite, el) {
   el.classList.toggle("fa-regular", !isFavorite);
   el.classList.toggle("fa-solid", isFavorite);
 }
 
 function handleFavorite(isFavorite) {
-  showBtn(toggleBtn);
+  showBtn(favoriteBtn);
 
-  toggleFavoriteIcon(isFavorite, toggleBtn);
+  toggleFavoriteBtnIcon(isFavorite, favoriteBtn);
 }
 
 export { handleFavorite };
