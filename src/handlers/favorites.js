@@ -1,7 +1,5 @@
 import { favoriteBtn } from "../../index.js";
 
-
-
 function toggleFavorite(quote, btn, container) {
   quote.isFavorite = !quote.isFavorite;
   const { text, author, isFavorite } = quote;
