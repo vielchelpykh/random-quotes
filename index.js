@@ -1,76 +1,87 @@
-import quotes from "./src/data/quotes.js";
 import {
-  handleQuote,
-  displayQuote,
-  findQuoteById,
-} from "./src/handlers/quote.js";
-import { toggleFavorite, hideFavoriteBtn, showFavoriteCard } from "./src/handlers/favorites.js";
+  displayCurrentQuote,
+} from "./src/handlers/currentQuote.js";
+import { 
+  toggleFavoriteCard, 
+  hideFavoriteBtn, 
+  showFavoriteCard, 
+  showFavoriteBtn, 
+  removeFavoriteCard 
+} from "./src/handlers/favorites.js";
 import {
   localStorageSetItem,
   localStorageGetItem,
 } from "./src/utils/localStorage.js";
+import { getRandomQuote } from "./src/handlers/randomQuote.js";
+import { removeObjectFromArrayById } from "./src/utils/array.js";
 
 
 const CURRENT_QUOTE_KEY = "currentQuote"
 const FAVORITE_QUOTES_KEY = "favoriteQuotes"
 let currentQuote = null;
-const favoriteQuotes = []
+const favoriteQuotes = [];
 
 
-const favoritesContainer = document.getElementById("favorites-container");
+const randomQuoteBtn = document.getElementById("random-quote-btn");
 const quoteFavoriteBtn = document.getElementById("quote-favorite-btn");
+const favoritesContainer = document.getElementById("favorites-container");
+
+
 hideFavoriteBtn();
-quoteFavoriteBtn.addEventListener("click", () =>
-  toggleFavorite(
-    currentQuote,
-    setCurrentQuote,
-    quoteFavoriteBtn,
-    favoritesContainer,
-  ),
-);
+quoteFavoriteBtn.addEventListener("click", toggleCurrentQuote);
+randomQuoteBtn.addEventListener("click", () => setCurrentQuote(getRandomQuote()));
 
-function setCurrentQuote(quote, shouldToggleIsFavorite = false) {
-  if (shouldToggleIsFavorite) {
-    quote.isFavorite = !quote.isFavorite;
-    if (quote.isFavorite) {
-      favoriteQuotes.push({ ...quote })
-    } else {
-      const index = favoriteQuotes.findIndex((favoriteQuote) => favoriteQuote.id === quote.id)
-      if (index !== -1) {
-        favoriteQuotes.splice(index, 1);
-      }
-    }
 
-    localStorageSetItem("favoriteQuotes", favoriteQuotes);
+function removeFavoriteQuote(id) {
+  if (id === currentQuote.id) {
+    toggleCurrentQuote();
+  } else {
+    removeObjectFromArrayById(favoriteQuotes, id)
+  
+    removeFavoriteCard(id);
+    localStorageSetItem(FAVORITE_QUOTES_KEY, favoriteQuotes);
   }
-  currentQuote = quote;
-  localStorageSetItem("currentQuote", currentQuote);
+
 }
 
-const generateBtn = document.getElementById("generate-btn");
-generateBtn.addEventListener("click", () =>
-  handleQuote(quotes, favoriteQuotes, setCurrentQuote),
-);
+function toggleCurrentQuote() {
+  currentQuote.isFavorite = !currentQuote.isFavorite;
+  showFavoriteBtn(currentQuote.isFavorite);
+  localStorageSetItem(CURRENT_QUOTE_KEY, currentQuote);
+  // favorite quotes update
+  if (currentQuote.isFavorite) {
+    favoriteQuotes.push({ ...currentQuote });
+  } else {
+    removeObjectFromArrayById(favoriteQuotes, currentQuote.id)
+  }
+  toggleFavoriteCard(currentQuote, favoritesContainer);
+  localStorageSetItem(FAVORITE_QUOTES_KEY, favoriteQuotes);
+}
+
+function setCurrentQuote(quote) {
+  currentQuote = { ...quote };
+  currentQuote.isFavorite = !!favoriteQuotes.find((favoriteQuote) => favoriteQuote.id === currentQuote.id);
+  displayCurrentQuote(currentQuote);
+  showFavoriteBtn(currentQuote.isFavorite)
+  localStorageSetItem(CURRENT_QUOTE_KEY, currentQuote);
+}
 
 function init() {
-  const currentQuoteFromStorage = localStorageGetItem(CURRENT_QUOTE_KEY);
-  if (currentQuoteFromStorage) {
-    displayQuote(currentQuoteFromStorage);
-    const quote = findQuoteById(quotes, currentQuoteFromStorage.id);
-    quote.isFavorite = currentQuoteFromStorage.isFavorite;
-    currentQuote = quote;
-  }
-
   const favoriteQuotesFromStorage = localStorageGetItem(FAVORITE_QUOTES_KEY);
   if (favoriteQuotesFromStorage) {
     favoriteQuotesFromStorage.forEach((quote) => {
-      showFavoriteCard(quote, setCurrentQuote, favoritesContainer);
+      showFavoriteCard(quote, favoritesContainer);
       favoriteQuotes.push(quote);
     });
+  }
+
+  const currentQuoteFromStorage = localStorageGetItem(CURRENT_QUOTE_KEY);
+  if (currentQuoteFromStorage) {
+    setCurrentQuote(currentQuoteFromStorage)
   }
 }
 
 window.addEventListener("load", init);
 
 
-export { quoteFavoriteBtn };
+export { quoteFavoriteBtn, removeFavoriteQuote };
